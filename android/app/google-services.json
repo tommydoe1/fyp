@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "321501080252",
+    "project_id": "fyp-database-dc27a",
+    "storage_bucket": "fyp-database-dc27a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:321501080252:android:1a1075e8091711646f7eb9",
+        "android_client_info": {
+          "package_name": "com.example.fyp_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmUAT_Stl67Aq8f73wDX3Da1MEfOiH4_Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

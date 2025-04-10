@@ -1,0 +1,142 @@
+Product,Caffiene value (mg),Category,Size (ml),Related terms
+Other,,,,
+Average Home Coffee (Small),95,Coffee,240,
+Average Home Coffee (Medium),140,Coffee,350,
+Average Home Coffee (Large),190,Coffee,475,
+Average Black Tea (Small),45,Tea,200,
+Average Black Tea (Medium),68,Tea,300,
+Average Black Tea (Large),90,Tea,400,
+Average Earl Grey Tea (Small),40,Tea,200,
+Average Earl Grey Tea (Medium),60,Tea,300,
+Average Earl Grey Tea (Large),80,Tea,400,
+Average Coffee Shop Coffee (Small),135,Coffee,240,
+Average Coffee Shop Coffee (Medium),185,Coffee,355,
+Average Coffee Shop Coffee (Large),300,Coffee,475,
+Average Coffee Shop Cappuccino (Small),63,Coffee,240,
+Average Coffee Shop Cappuccino (Small) Extra Espresso Shot,126,Coffee,240,
+Average Coffee Shop Cappuccino (Medium),126,Coffee,355,
+Average Coffee Shop Cappuccino (Medium) Extra Espresso Shot,189,Coffee,355,
+Average Coffee Shop Cappuccino (Large),189,Coffee,475,
+Average Coffee Shop Cappuccino (Large) Extra Espresso Shot,252,Coffee,475,
+Average Coffee Shop Americano (Small),63,Coffee,240,
+Average Coffee Shop Americano (Small) Extra Espresso Shot,126,Coffee,240,
+Average Coffee Shop Americano (Medium),126,Coffee,355,
+Average Coffee Shop Americano (Medium) Extra Espresso Shot,189,Coffee,355,
+Average Coffee Shop Americano (Large),189,Coffee,475,
+Average Coffee Shop Americano (Large) Extra Espresso Shot,252,Coffee,475,
+Average Coffee Shop Latte (Small),63,Coffee,240,
+Average Coffee Shop Latte (Small) Extra Espresso Shot,126,Coffee,240,
+Average Coffee Shop Latte (Medium),126,Coffee,355,
+Average Coffee Shop Latte (Medium) Extra Espresso Shot,189,Coffee,355,
+Average Coffee Shop Latte (Large),189,Coffee,475,
+Average Coffee Shop Latte (Large) Extra Espresso Shot,252,Coffee,475,
+Average Coffee Shop Macchiato (Small),63,Coffee,240,
+Average Coffee Shop Macchiato (Small) Extra Espresso Shot,126,Coffee,240,
+Average Coffee Shop Macchiato (Medium),126,Coffee,355,
+Average Coffee Shop Macchiato (Medium) Extra Espresso Shot,189,Coffee,355,
+Average Coffee Shop Macchiato (Large),189,Coffee,475,
+Average Coffee Shop Macchiato (Large) Extra Espresso Shot,252,Coffee,475,
+Average Coffee Shop Mocha (Small),63,Coffee,240,
+Average Coffee Shop Mocha (Small) Extra Espresso Shot,126,Coffee,240,
+Average Coffee Shop Mocha (Medium),126,Coffee,355,
+Average Coffee Shop Mocha (Medium) Extra Espresso Shot,189,Coffee,355,
+Average Coffee Shop Mocha (Large),189,Coffee,475,
+Average Coffee Shop Mocha (Large) Extra Espresso Shot,252,Coffee,475,
+Average Coffee Shop Flat White (Small),126,Coffee,240,
+Average Coffee Shop Flat White (Small) Extra Espresso Shot,189,Coffee,240,
+Average Coffee Shop Cortado (Small),63,Coffee,120,
+Average Coffee Shop Cortado (Small) Extra Espresso Shot,126,Coffee,120,
+Average Espresso Shot,65,Coffee,30,
+Starbucks Filter Coffee (Short),131.7,Coffee,227,small
+Starbucks Filter Coffee (Tall),209.8,Coffee,341,medium
+Starbucks Filter Coffee (Grande),254.6,Coffee,455,large
+Starbucks Filter Coffee (Venti),324.2,Coffee,568,extra large
+Cold Brew Coffee (Tall),188.6,Coffee,341,medium
+Cold Brew Coffee (Grande),255.8,Coffee,455,large
+Cold Brew Coffee (Venti),322.9,Coffee,568,extra large
+Cold Brew Latte (Tall),159.1,Coffee,341,medium
+Cold Brew Latte (Grande),166.5,Coffee,455,large
+Cold Brew Latte (Venti),204.7,Coffee,568,extra large
+Starbucks Caffe Latte (Short),44.5,Coffee,227,small
+Starbucks Caffe Latte (Short) Extra Espresso Shot,89.1,Coffee,227,small
+Starbucks Caffe Latte (Tall),89.1,Coffee,341,medium
+Starbucks Caffe Latte (Tall) Extra Espresso Shot,133.6,Coffee,341,medium
+Starbucks Caffe Latte (Grande),89.1,Coffee,455,large
+Starbucks Caffe Latte (Grande) Extra Espresso Shot,133.6,Coffee,455,large
+Starbucks Caffe Latte (Venti),133.6,Coffee,568,extra large
+Starbucks Caffe Latte (Venti) Extra Espresso Shot,178.2,Coffee,568,extra large
+Starbucks Caffe Mocha (Short),44.5,Coffee,227,small
+Starbucks Caffe Mocha (Short) Extra Espresso Shot,89.1,Coffee,227,small
+Starbucks Caffe Mocha (Tall),89.1,Coffee,341,medium
+Starbucks Caffe Mocha (Tall) Extra Espresso Shot,133.6,Coffee,341,medium
+Starbucks Caffe Mocha (Grande),89.1,Coffee,455,large
+Starbucks Caffe Mocha (Grande) Extra Espresso Shot,133.6,Coffee,455,large
+Starbucks Caffe Mocha (Venti),133.6,Coffee,568,extra large
+Starbucks Caffe Mocha (Venti) Extra Espresso Shot,178.2,Coffee,568,extra large
+Starbucks Caffe Americano (Short),44.5,Coffee,227,small
+Starbucks Caffe Americano (Short) Extra Espresso Shot,89.1,Coffee,227,small
+Starbucks Caffe Americano (Tall),89.1,Coffee,341,medium
+Starbucks Caffe Americano (Tall) Extra Espresso Shot,133.6,Coffee,341,medium
+Starbucks Caffe Americano (Grande),89.1,Coffee,455,large
+Starbucks Caffe Americano (Grande) Extra Espresso Shot,133.6,Coffee,455,large
+Starbucks Caffe Americano (Venti),133.6,Coffee,568,extra large
+Starbucks Caffe Americano (Venti) Extra Espresso Shot,178.2,Coffee,568,extra large
+Starbucks Latte Macchiato (Short),44.5,Coffee,227,small
+Starbucks Latte Macchiato (Short) Extra Espresso Shot,89.1,Coffee,227,small
+Starbucks Latte Macchiato (Tall),89.1,Coffee,341,medium
+Starbucks Latte Macchiato (Tall) Extra Espresso Shot,133.6,Coffee,341,medium
+Starbucks Latte Macchiato (Grande),89.1,Coffee,455,large
+Starbucks Latte Macchiato (Grande) Extra Espresso Shot,133.6,Coffee,455,large
+Starbucks Latte Macchiato (Venti),133.6,Coffee,568,extra large
+Starbucks Latte Macchiato (Venti) Extra Espresso Shot,178.2,Coffee,568,extra large
+Starbucks Cappuccino (Short),44.5,Coffee,227,small
+Starbucks Cappuccino (Short) Extra Espresso Shot,89.1,Coffee,227,small
+Starbucks Cappuccino (Tall),89.1,Coffee,341,medium
+Starbucks Cappuccino (Tall) Extra Espresso Shot,133.6,Coffee,341,medium
+Starbucks Cappuccino (Grande),89.1,Coffee,455,large
+Starbucks Cappuccino (Grande) Extra Espresso Shot,133.6,Coffee,455,large
+Starbucks Cappuccino (Venti),133.6,Coffee,568,extra large
+Starbucks Cappuccino (Venti) Extra Espresso Shot,178.2,Coffee,568,extra large
+Starbucks Flat White (Short),89.1,Coffee,227,small
+Starbucks Flat White (Short) Extra Espresso Shot,133.6,Coffee,227,small
+Starbucks Cortado (Short),106.6,Coffee,227,small
+Starbucks Cortado (Short) Extra Espresso Shot,151.2,Coffee,227,small
+Starbucks Espresso Shot,44.5,Coffee,43,
+Starbucks Caramel Frappuccino (Tall),23.1,Coffee,341,medium
+Starbucks Caramel Frappuccino (Grande),30.8,Coffee,455,large
+Starbucks Caramel Frappuccino (Venti),39.5,Coffee,568,extra large
+Starbucks Coffee Frappuccino (Tall),23,Coffee,341,medium
+Starbucks Coffee Frappuccino (Grande),31.4,Coffee,455,large
+Starbucks Coffee Frappuccino (Venti),39.5,Coffee,568,extra large
+Starbucks Espresso Frappuccino (Tall),59.1,Coffee,341,medium
+Starbucks Espresso Frappuccino (Grande),62.3,Coffee,455,large
+Starbucks Espresso Frappuccino (Venti),72.1,Coffee,568,extra large
+Starbucks Mocha Frappuccino (Tall),22.6,Coffee,341,medium
+Starbucks Mocha Frappuccino (Grande),30,Coffee,455,large
+Starbucks Mocha Frappuccino (Venti),39.3,Coffee,568,extra large
+Costa Espresso,100,Coffee,30,
+Costa Ristretto,90,Coffee,30,
+(Small) Costa Latte,100,Coffee,276,
+(Medium) Costa Latte,200,Coffee,364,
+(Large) Costa Latte,300,Coffee,496,
+(Small) Costa Cappuccino,200,Coffee,287,
+(Medium) Costa Cappuccino,300,Coffee,362,
+(Large) Costa Cappuccino,400,Coffee,422,
+(Small) Costa Mocha,200,Coffee,277,
+(Medium) Costa Mocha,300,Coffee,332,
+(Large) Costa Mocha,400,Coffee,422,
+(Small) Costa Americano,200,Coffee,260,
+(Medium) Costa Americano,300,Coffee,340,
+(Large) Costa Americano,400,Coffee,450,
+(Small) Costa Flat White,241,Coffee,300,
+(Small) Costa Flat Black,241,Coffee,300,
+Red Bull 250ml,80,Energy Drink,250,
+Red Bull 355ml,113.6,Energy Drink,355,
+Red Bull 473ml,151,Energy Drink,473,
+Monster Energy 500ml,160,Energy Drink,500,
+Lucozade Energy 900ml,108,Energy Drink,900,
+Lucozade Energy 500ml,60,Energy Drink,500,
+Lucozade Energy 380ml,45.6,Energy Drink,380,
+Relentless 500ml,160,Energy Drink,500,
+Average Energy Drink 250ml,80,Energy Drink,250,
+Average Energy Drink 500ml,160,Energy Drink,500,
