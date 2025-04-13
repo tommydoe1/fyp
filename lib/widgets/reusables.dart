@@ -11,6 +11,7 @@ final Map<String, double> hydrationMultipliers = {
   'Water': 1.0,
   'Coffee': 0.8,
   'Tea': 0.9,
+  'Soft Drink': 0.7,
   'Energy Drink': 0.7,
   'Alcoholic Drink': 0.3,
   'Sports Drink': 0.9,

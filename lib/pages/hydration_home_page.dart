@@ -203,6 +203,7 @@ class _HydroHomePageState extends State<HydroHomePage> {
                     'Water',
                     'Coffee',
                     'Tea',
+                    'Soft Drink',
                     'Energy Drink',
                     'Alcoholic Drink',
                     'Sports Drink',
