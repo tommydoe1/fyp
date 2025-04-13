@@ -303,6 +303,7 @@ class _HydroHomePageState extends State<HydroHomePage> {
                 SizedBox(height: 10),
                 Text(
                   _progressMessage,
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     color: lblue,
                     fontSize: 20,

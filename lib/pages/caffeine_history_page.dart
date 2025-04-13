@@ -487,8 +487,9 @@ class _CaffeineHistoryPageState extends State<CaffeineHistoryPage> {
       ));
     }
 
-    // Max Y value is set to 8 as per your requirement
-    final maxYValue = 8;
+    final maxItem = _itemTypeCounts.values.fold<num>(
+        0, (prev, element) => element > prev ? element : prev);
+    final maxYValue = max(maxItem, 8);
 
     // Calculate an appropriate step based on the maxYValue
     int step = 1;

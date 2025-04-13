@@ -1180,7 +1180,7 @@ class _HomePageState extends State<HomePage> {
 
               // Hide specific times & minutes for "Even earlier" & "Even later"
               if (buttonText != "Even earlier" && buttonText != "Even later") {
-                buttonText += " (${option["duration"]} min - $formattedTime)";
+                buttonText += " ($formattedTime)";
               }
 
               return Padding(
