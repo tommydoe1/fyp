@@ -350,7 +350,7 @@ class DatabaseController {
         Duration cafDuration = Duration(minutes: cafTime.toInt());
         cafEnd = cafEnd.add(cafDuration);
         int totalMinutes = cafEnd
-            .difference(DateTime.now())
+            .difference(consumptionDateTime)
             .inMinutes;
         Map<String, dynamic> history = await getCaffeineHistory(uid);
         if (history.isNotEmpty) {
@@ -422,7 +422,7 @@ class DatabaseController {
               {
                 'name': itemName,
                 'caffeineContent': caffeineContent,
-                'timeConsumed': Timestamp.now(),
+                'timeConsumed': Timestamp.fromDate(consumptionDateTime),
               }
             ])
           });
