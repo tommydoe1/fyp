@@ -359,8 +359,9 @@ class _CaffeineHistoryPageState extends State<CaffeineHistoryPage> {
               leftTitles: AxisTitles(
                 sideTitles: SideTitles(
                   showTitles: true,
+                  reservedSize: 50,
                   getTitlesWidget: (value, meta) => Text(
-                    "${value.toInt()} mg",
+                    "${value.toInt()}mg",
                     style: TextStyle(
                       color: cafColorScheme.foregroundColor,
                       fontSize: _calculateFontSize(barCount),

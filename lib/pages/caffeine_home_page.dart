@@ -21,7 +21,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String? _selectedTime;
+  TimeOfDay _selectedTime = TimeOfDay.now();
   String? _selectedItem;
   double _selectedItemCaffeine = 0;
   String _selectedItemCategory = 'Coffee';
@@ -51,7 +51,6 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _generateTimeDropdown();
     _fetchUsername();
-    _fetchBedtime();
     _loadPersonalList();
     _checkRequiredFields();
     _categoryController.text = _selectedItemCategory.toString();
@@ -700,23 +699,19 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> _fetchBedtime() async {
-    String bedtime = await databaseController.getBedtime(widget.uid);
+  Future<void> _pickTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: _selectedTime,
+    );
 
-    if (bedtime.isNotEmpty) {
-      List<String> parts = bedtime.split(':');
-      String normalizedBedtime =
-          '${parts[0].padLeft(2, '0')}:${parts[1].padLeft(2, '0')}';
-
-      if (mounted) {
-        setState(() {
-          _selectedTime = times.contains(normalizedBedtime)
-              ? normalizedBedtime
-              : times.first;
-        });
-      }
+    if (picked != null && picked != _selectedTime) {
+      setState(() {
+        _selectedTime = picked;
+      });
     }
   }
+
 
   void _generateTimeDropdown() {
     for (int hour = 0; hour < 24; hour++) {
@@ -741,7 +736,7 @@ class _HomePageState extends State<HomePage> {
             height: double.infinity,
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(5.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -768,7 +763,6 @@ class _HomePageState extends State<HomePage> {
                           fontSize: 18,
                           fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(height: 10),
 
                     // TypeAheadField
                     TypeAheadField<String>(
@@ -989,7 +983,38 @@ class _HomePageState extends State<HomePage> {
                       //           ? ''
                       //           : _selectedItemSize.toString()),
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 5),
+
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Time of consumption:',
+                              style: TextStyle(
+                                color: caramel,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () => _pickTime(context),
+                              child: Text(
+                                _selectedTime.format(context),
+                                style: TextStyle(
+                                  color: caramel,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 5),
+                      ],
+                    ),
 
                     // Add New Item button
                     Center(
@@ -1032,7 +1057,9 @@ class _HomePageState extends State<HomePage> {
                                   itemName: _selectedItem.toString(),
                                   caffeineContent: _selectedItemCaffeine,
                                   category: _selectedItemCategory,
-                                  size: _selectedItemSize);
+                                  size: _selectedItemSize,
+                                  consumptionTime : _selectedTime
+                              );
                           if (confirmed!) {
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                 content:

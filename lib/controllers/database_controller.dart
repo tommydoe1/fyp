@@ -300,8 +300,18 @@ class DatabaseController {
     required double caffeineContent,
     required String category,
     required int size,
+    required TimeOfDay consumptionTime
   }) async {
     try {
+      DateTime now = DateTime.now();
+      DateTime consumptionDateTime = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        consumptionTime.hour,
+        consumptionTime.minute,
+      );
+
       DocumentSnapshot userCaffeineDoc = await _firestore.collection('caffeine')
           .doc(uid)
           .get();
@@ -312,7 +322,7 @@ class DatabaseController {
         DateTime cafEnd = (userCaffeineDoc['cafEnd'] as Timestamp).toDate();
 
         if (cafEnd.isBefore(DateTime.now())) {
-          cafEnd = DateTime.now();
+          cafEnd = consumptionDateTime;
         }
 
         double height = double.parse(await getHeight(uid));
