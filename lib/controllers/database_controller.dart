@@ -247,8 +247,9 @@ class DatabaseController {
           if (item['name'] == oldName) {
             return {
               'name': updatedItem['name'] ?? item['name'],
-              'caffeineAmount': updatedItem['caffeineAmount'] ?? item['caffeineAmount'],
-              'size': updatedItem['size'] ?? item['size'],
+              'caffeineAmount': _parseNum(updatedItem['caffeineAmount']) ?? item['caffeineAmount'],
+              'size': _parseNum(updatedItem['size']) ?? item['size'],
+              'category' : item['category'] ?? 'Coffee'
             };
           }
           return item;
@@ -262,6 +263,14 @@ class DatabaseController {
     }
   }
 
+  num? _parseNum(dynamic value) {
+    if (value == null) return null;
+    if (value is num) return value;
+    if (value is String) {
+      return num.tryParse(value);
+    }
+    return null;
+  }
 
   Future<void> removeItemFromPersonalList({
     required String uid,

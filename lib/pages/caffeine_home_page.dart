@@ -221,6 +221,10 @@ class _HomePageState extends State<HomePage> {
 
                               Navigator.of(context)
                                   .pop();
+                              await _loadPersonalList();
+                              if (mounted) {
+                                setState(() {});
+                              }
                             } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -242,7 +246,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _showEditListDialog(BuildContext context) {
+  Future<bool>? _showEditListDialog(BuildContext context) {
+    bool hasUpdates = false;
     showDialog(
       context: context,
       builder: (context) {
@@ -296,15 +301,20 @@ class _HomePageState extends State<HomePage> {
                                 if (isSelecting && selectedItems.isNotEmpty)
                                   TextButton(
                                     onPressed: () async {
-                                      for (var name in selectedItems) {
-                                        await databaseController
-                                            .removeItemFromPersonalList(
-                                                uid: widget.uid,
-                                                itemName: name);
+                                      bool? confirmDelete = await showYesNoDialog(context, "Confirm Deletion", "Are you sure you want to delete the selected items?");
+                                      if (confirmDelete!) {
+                                        for (var name in selectedItems) {
+                                          await databaseController
+                                              .removeItemFromPersonalList(
+                                              uid: widget.uid,
+                                              itemName: name);
+                                        }
+                                        hasUpdates = true;
+                                        setState(() {
+                                          items.removeWhere((item) => selectedItems.contains(item['name']));
+                                          selectedItems.clear();
+                                        });
                                       }
-                                      setState(() {
-                                        selectedItems.clear();
-                                      });
                                     },
                                     child: Text(
                                       'Delete Selected',
@@ -597,12 +607,21 @@ class _HomePageState extends State<HomePage> {
                                                     icon: Icon(Icons.delete,
                                                         color: Colors.red),
                                                     onPressed: () async {
-                                                      await databaseController
-                                                          .removeItemFromPersonalList(
-                                                              uid: widget.uid,
-                                                              itemName:
-                                                                  originalName);
-                                                      setState(() {});
+                                                      bool? confirmDelete = await showYesNoDialog(context, "Confirm Deletion", "Are you sure you want to delete $originalName?");
+                                                      if (confirmDelete!) {
+                                                        await databaseController
+                                                            .removeItemFromPersonalList(
+                                                            uid: widget.uid,
+                                                            itemName:
+                                                            originalName);
+                                                        hasUpdates = true;
+                                                        setState(() {
+                                                          items.removeWhere((element) => element['name'] == originalName);
+                                                          controllers.remove(originalName);
+                                                          editedItems.remove(originalName);
+                                                          selectedItems.remove(originalName);
+                                                        });
+                                                      }
                                                     },
                                                   ),
                                                 if (hasChanges)
@@ -619,6 +638,7 @@ class _HomePageState extends State<HomePage> {
                                                           'size': editedSize,
                                                         },
                                                       );
+                                                      hasUpdates = true;
                                                       setState(() {
                                                         editedItems.remove(
                                                             originalName);
@@ -644,7 +664,11 @@ class _HomePageState extends State<HomePage> {
                         Align(
                           alignment: Alignment.bottomRight,
                           child: TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
+                            onPressed: () async {
+                              Navigator.of(context).pop(hasUpdates);
+                              await _loadPersonalList();
+                              if (mounted) setState(() {});
+                            },
                             child:
                                 Text('Close', style: TextStyle(color: caramel)),
                           ),
@@ -1015,9 +1039,13 @@ class _HomePageState extends State<HomePage> {
 
                     Center(
                       child: ElevatedButton(
-                        onPressed: () {
-                          _showEditListDialog(context);
-                        },
+                        onPressed: () async {
+                          bool? updated = await _showEditListDialog(context) ?? true;
+                          if (updated) {
+                            await _loadPersonalList();
+                            if (mounted) setState(() {});
+                          }
+                          },
                         child: Text(
                           'Edit Items List',
                           style: TextStyle(
