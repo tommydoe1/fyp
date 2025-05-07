@@ -65,11 +65,11 @@ class _CaffeineHistoryPageState extends State<CaffeineHistoryPage> {
 
   void _fetchAllData() async {
     DateTime now = DateTime.now();
-    DateTime startDate = now.subtract(Duration(days: 90)); // Last 3 months
+    DateTime startDate = now.subtract(Duration(days: 90));
 
     List<Map<String, dynamic>> logs = await databaseController.getCaffeineHistoryForPeriod(widget.uid, startDate, now);
 
-    // Sort logs by timestamp in descending order (most recent first)
+
     logs.sort((a, b) {
       Timestamp timestampA = a['timeConsumed'];
       Timestamp timestampB = b['timeConsumed'];
@@ -82,7 +82,7 @@ class _CaffeineHistoryPageState extends State<CaffeineHistoryPage> {
       _allCaffeineLogs = logs; // Store all data
     });
 
-    // Apply initial filter (e.g., default to last 7 days)
+    // Apply default filter of last week
     _filterData("Last Week");
   }
 
@@ -230,7 +230,7 @@ class _CaffeineHistoryPageState extends State<CaffeineHistoryPage> {
                         ),
                         SizedBox(height: 4),
                         Text(
-                          "Time Consumed: $formattedTime", // Use the formatted time here
+                          "Time Consumed: $formattedTime",
                           style: TextStyle(color: cafColorScheme.foregroundColor, fontSize: 14),
                         ),
                       ],
@@ -249,12 +249,10 @@ class _CaffeineHistoryPageState extends State<CaffeineHistoryPage> {
     final bars = <BarChartGroupData>[];
     final allDates = <DateTime>[];
 
-    // Collect all dates in _dailyConsumption
     _dailyConsumption.keys.forEach((dateStr) {
       allDates.add(DateTime.parse(dateStr));
     });
 
-    // Determine the date range
     DateTime now = DateTime.now();
     DateTime startDate = allDates.isEmpty
         ? now.subtract(Duration(days: 7)) // Default to last 7 days if no data
@@ -284,9 +282,9 @@ class _CaffeineHistoryPageState extends State<CaffeineHistoryPage> {
           BarChartRodData(
             toY: caffeineAmount,
             color: cafColorScheme.foregroundColor,
-            width: 10, // Temporary value, will be adjusted dynamically
+            width: 10,
             borderRadius: BorderRadius.circular(2),
-            borderSide: BorderSide(color: Colors.black, width: 0.8), // Thin outline
+            borderSide: BorderSide(color: Colors.black, width: 0.8),
           ),
         ],
       ));
@@ -309,8 +307,8 @@ class _CaffeineHistoryPageState extends State<CaffeineHistoryPage> {
       builder: (context, constraints) {
         double chartWidth = constraints.maxWidth; // Get chart width dynamically
         int barCount = bars.length;
-        double maxBarWidth = 20; // Maximum bar width
-        double minBarWidth = 5; // Minimum bar width for many bars
+        double maxBarWidth = 20;
+        double minBarWidth = 5;
         double barWidth =
         max(minBarWidth, min(maxBarWidth, chartWidth / (barCount * 2)));
 
@@ -323,9 +321,9 @@ class _CaffeineHistoryPageState extends State<CaffeineHistoryPage> {
                   BarChartRodData(
                     toY: bar.barRods[0].toY,
                     color: cafColorScheme.foregroundColor,
-                    width: barWidth, // Dynamically adjusted width
+                    width: barWidth,
                     borderRadius: BorderRadius.circular(2),
-                    borderSide: BorderSide(color: Colors.black, width: 0.8), // Thin outline
+                    borderSide: BorderSide(color: Colors.black, width: 0.8),
                   ),
                 ],
               );
@@ -371,12 +369,12 @@ class _CaffeineHistoryPageState extends State<CaffeineHistoryPage> {
               ),
               topTitles: AxisTitles(
                 sideTitles: SideTitles(
-                  showTitles: false, // Hide top titles
+                  showTitles: false,
                 ),
               ),
               rightTitles: AxisTitles(
                 sideTitles: SideTitles(
-                  showTitles: false, // Hide right titles
+                  showTitles: false,
                 ),
               ),
             ),
@@ -398,7 +396,7 @@ class _CaffeineHistoryPageState extends State<CaffeineHistoryPage> {
               ],
             ),
             barTouchData: BarTouchData(
-              enabled: true, // Ensure touch interaction is enabled
+              enabled: true,
               touchTooltipData: BarTouchTooltipData(
                 tooltipPadding: EdgeInsets.all(8),
                 tooltipMargin: 8,
@@ -417,7 +415,7 @@ class _CaffeineHistoryPageState extends State<CaffeineHistoryPage> {
                   width: 2,
                 ),
               ),
-              handleBuiltInTouches: true, // Ensure touch handling is active
+              handleBuiltInTouches: true,
             ),
             gridData: FlGridData(
               show: true,
@@ -432,14 +430,6 @@ class _CaffeineHistoryPageState extends State<CaffeineHistoryPage> {
         );
       },
     );
-  }
-
-// Dynamically adjust bar width to prevent overflow
-  double _calculateBarWidth(int numberOfBars, BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double maxWidth = screenWidth / (numberOfBars + 2);
-
-    return max(5, min(maxWidth, 12)); // Limit bar width between 5 and 12 pixels
   }
 
 // Dynamically adjust font size for labels
@@ -458,13 +448,13 @@ class _CaffeineHistoryPageState extends State<CaffeineHistoryPage> {
   BarChartData _buildItemTypeGraph() {
     // Sort the item counts alphabetically by the keys (item names)
     final sortedEntries = _itemTypeCounts.entries.toList()
-      ..sort((a, b) => a.key.compareTo(b.key));  // Sort by item name (alphabetically)
+      ..sort((a, b) => a.key.compareTo(b.key));
 
     final bars = sortedEntries.asMap().map((index, entry) {
       return MapEntry(
-        index,  // Use the index as the X position
+        index,
         BarChartGroupData(
-          x: index,  // Set X position to the index of the sorted list
+          x: index,
           barRods: [
             BarChartRodData(
               toY: entry.value.toDouble(),
@@ -480,7 +470,6 @@ class _CaffeineHistoryPageState extends State<CaffeineHistoryPage> {
       );
     }).values.toList();
 
-    // Ensure the list is not empty
     if (bars.isEmpty) {
       bars.add(BarChartGroupData(
         x: 0,
@@ -498,7 +487,6 @@ class _CaffeineHistoryPageState extends State<CaffeineHistoryPage> {
       step = (maxYValue / 10).ceil();
     }
 
-    // Determine the threshold for shortening item names dynamically based on the number of items
     final itemCount = sortedEntries.length;
     int maxLength = 10; // Default length for item names
     if (itemCount > 10) {
@@ -530,8 +518,8 @@ class _CaffeineHistoryPageState extends State<CaffeineHistoryPage> {
           sideTitles: SideTitles(
             showTitles: true,
             getTitlesWidget: (value, meta) {
-              final index = value.toInt() % itemCount;  // Correct index for bottom labels
-              final fullName = sortedEntries[index].key;  // Get the sorted item name
+              final index = value.toInt() % itemCount;
+              final fullName = sortedEntries[index].key;
 
               // Shorten name based on maxLength
               final shortenedName = fullName.length > maxLength
@@ -562,7 +550,7 @@ class _CaffeineHistoryPageState extends State<CaffeineHistoryPage> {
           getTooltipItem: (group, groupIndex, rod, rodIndex) {
             if (group != null && rod != null) {
               return BarTooltipItem(
-                '${sortedEntries[groupIndex].key}: ${rod.toY.toInt()}',  // Use sorted key for tooltip
+                '${sortedEntries[groupIndex].key}: ${rod.toY.toInt()}',
                 TextStyle(color: Colors.white),
               );
             }

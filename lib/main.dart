@@ -3,44 +3,55 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import '../pages/welcome_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../pages/welcome_page.dart';
 import '../pages/menu_page.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Initialize FCM
+  // Request permissions and initialize
+  await setupNotifications();
+
+  runApp(MyApp());
+}
+
+Future<void> setupNotifications() async {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-  // Request permission for iOS (if necessary)
-  await messaging.requestPermission();
+  NotificationSettings settings = await messaging.requestPermission();
+  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+    print("✅ Notification permission granted");
+  } else {
+    print("❌ Notification permission denied");
+  }
 
-  // Set up background message handler (if your app is terminated or in the background)
+  // Background handler
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  // Initialize the local notifications plugin for foreground notifications
-  NotificationService().initializeNotifications();
+  // Initialize local notifications
+  await NotificationService().initializeNotifications();
 
-  // Handle foreground notifications
-  handleForegroundMessages();
-
-  // Get and save FCM token to Firestore for the user
-  messaging.getToken().then((String? token) {
-    if (token != null && FirebaseAuth.instance.currentUser != null) {
-      // Save the token in Firestore under the user's document
-      FirebaseFirestore.instance
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser?.uid)
-          .set({'fcmToken': token}, SetOptions(merge: true));
+  // Foreground handler
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    if (message.notification != null) {
+      print("🔔 Foreground notification: ${message.notification!.title}");
+      NotificationService().showNotification(message);
     }
   });
 
-  runApp(MyApp());
+  // Store FCM token if user is logged in
+  messaging.getToken().then((String? token) {
+    print("📲 FCM Token: $token");
+    if (token != null && FirebaseAuth.instance.currentUser != null) {
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .set({'fcmToken': token}, SetOptions(merge: true));
+    }
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -52,81 +63,63 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      // Check if the user is signed in and show the appropriate page
       home: AuthWrapper(),
     );
   }
 }
 
-// A wrapper widget to handle the user's auth state and redirect accordingly
 class AuthWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Listen for auth state changes and navigate accordingly
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
-        // If the user is signed in, navigate to the MenuPage with the UID, else show the WelcomePage
         if (snapshot.connectionState == ConnectionState.active) {
           if (snapshot.hasData) {
-            // User is signed in, pass the UID to the MenuPage
-            return MenuPage(uid: snapshot.data!.uid);  // Pass the user's UID to MenuPage
+            return MenuPage(uid: snapshot.data!.uid);
           } else {
-            return WelcomePage();  // Show welcome page if user is not signed in
+            return WelcomePage();
           }
         }
-        return Center(child: CircularProgressIndicator());  // Show loading indicator while checking auth state
+        return Center(child: CircularProgressIndicator());
       },
     );
   }
 }
 
-// Background message handler (for when the app is closed or in the background)
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print('Handling a background message: ${message.notification?.title}');
-  // You can show a background notification here as well.
-  NotificationService().showNotification(message); // This can show a notification even in the background
+  print('🛌 Handling background message: ${message.notification?.title}');
+  NotificationService().showNotification(message);
 }
 
-// Show notification in the foreground using local notifications
 class NotificationService {
+  static final NotificationService _instance = NotificationService._internal();
+  factory NotificationService() => _instance;
+  NotificationService._internal();
+
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
   FlutterLocalNotificationsPlugin();
 
-  // Initialize notifications settings
   Future<void> initializeNotifications() async {
-    const initializationSettings = InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-    );
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const initSettings = InitializationSettings(android: androidSettings);
+    await flutterLocalNotificationsPlugin.initialize(initSettings);
   }
 
-  // Show a notification
   Future<void> showNotification(RemoteMessage message) async {
     const androidDetails = AndroidNotificationDetails(
       'channel_id',
       'channel_name',
       importance: Importance.high,
       priority: Priority.high,
-      showWhen: false,
     );
-    const platformDetails = NotificationDetails(android: androidDetails);
+    const notificationDetails = NotificationDetails(android: androidDetails);
 
-    // Show a notification with a unique ID
     await flutterLocalNotificationsPlugin.show(
-      0,
-      message.notification?.title,
-      message.notification?.body,
-      platformDetails,
+      DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      message.notification?.title ?? 'No Title',
+      message.notification?.body ?? 'No Body',
+      notificationDetails,
     );
   }
-}
-
-// Handle foreground messages
-void handleForegroundMessages() {
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    print('Received notification in the foreground: ${message.notification?.title}');
-    // Show notification using local notifications
-    NotificationService().showNotification(message);
-  });
 }

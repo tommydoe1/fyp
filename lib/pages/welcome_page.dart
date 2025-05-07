@@ -6,7 +6,6 @@ import '../pages/login_page.dart';
 class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Add navigation or any other functionality for sign-up
     return NeutralPage(
       title: 'Welcome',
       body: Center(

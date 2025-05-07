@@ -3,9 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/reusables.dart';
 import '../controllers/database_controller.dart';
 import '../widgets/caffeine_base_page.dart';
-import '../pages/item_scanner_page.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import '../controllers/hydration_page_controller.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 
@@ -38,7 +36,7 @@ class _HomePageState extends State<HomePage> {
     'Tea',
     'Energy Drink',
     'Soda'
-  ]; // Example items
+  ]; // Placeholder example items
 
   @override
   void dispose() {
@@ -160,7 +158,6 @@ class _HomePageState extends State<HomePage> {
                     ),
                     SizedBox(height: 10),
 
-                    // Size Input
                     TextField(
                       controller: sizeController,
                       keyboardType: TextInputType.number,
@@ -176,14 +173,13 @@ class _HomePageState extends State<HomePage> {
                     ),
                     SizedBox(height: 20),
 
-                    // Actions
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         TextButton(
                           onPressed: () {
                             Navigator.of(context)
-                                .pop(); // Close dialog without saving
+                                .pop();
                           },
                           child: Text(
                             'Cancel',
@@ -208,13 +204,10 @@ class _HomePageState extends State<HomePage> {
                             }
 
                             try {
-                              // Call the function to add the item to the user's personal list
                               await databaseController.addItemToPersonalList(
                                 uid: widget.uid,
-                                // Pass the user's unique ID
                                 name: name,
                                 caffeineAmount: int.parse(caffeine),
-                                // Convert caffeine to int
                                 category: selectedCategory,
                                 size: isSizeFieldEnabled
                                     ? int.parse(size)
@@ -227,7 +220,7 @@ class _HomePageState extends State<HomePage> {
                               );
 
                               Navigator.of(context)
-                                  .pop(); // Close dialog after success
+                                  .pop();
                             } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -287,7 +280,6 @@ class _HomePageState extends State<HomePage> {
                     return Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Title and Select/Delete Buttons
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -370,7 +362,6 @@ class _HomePageState extends State<HomePage> {
                                     var item = items[index];
                                     String originalName = item['name'];
 
-                                    // Initialize controllers for each field
                                     controllers.putIfAbsent(
                                       originalName,
                                       () => {
@@ -439,7 +430,7 @@ class _HomePageState extends State<HomePage> {
 
                                     if (!matchesItem(originalName, searchWords,
                                         relatedTerms)) {
-                                      return Container(); // Skip this item if it doesn't match the search query
+                                      return Container();
                                     }
 
                                     return Container(
@@ -498,7 +489,6 @@ class _HomePageState extends State<HomePage> {
                                                           OutlineInputBorder(),
                                                       filled: true,
                                                       fillColor: Colors.white
-                                                          .withOpacity(0.8),
                                                     ),
                                                   )
                                                 : GestureDetector(
@@ -543,7 +533,6 @@ class _HomePageState extends State<HomePage> {
                                                           filled: true,
                                                           fillColor: Colors
                                                               .white
-                                                              .withOpacity(0.8),
                                                         ),
                                                       )
                                                     : GestureDetector(
@@ -582,7 +571,6 @@ class _HomePageState extends State<HomePage> {
                                                           filled: true,
                                                           fillColor: Colors
                                                               .white
-                                                              .withOpacity(0.8),
                                                         ),
                                                       )
                                                     : GestureDetector(
@@ -700,15 +688,30 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _pickTime(BuildContext context) async {
-    final TimeOfDay? picked = await showTimePicker(
+    TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: _selectedTime,
     );
 
-    if (picked != null && picked != _selectedTime) {
-      setState(() {
-        _selectedTime = picked;
-      });
+    if (picked != null) {
+      final now = DateTime.now();
+      final pickedDateTime = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        picked.hour,
+        picked.minute,
+      );
+
+      if (pickedDateTime.isAfter(now)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("You can't select a future time.")),
+        );
+      } else {
+        setState(() {
+          _selectedTime = picked;
+        });
+      }
     }
   }
 
@@ -740,7 +743,6 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // Welcome Back text
                     Text(
                       'Welcome Back $_username!',
                       style: TextStyle(
@@ -755,7 +757,6 @@ class _HomePageState extends State<HomePage> {
                       height: 100,
                       fit: BoxFit.fill,
                     ),
-                    // Select item section
                     Text(
                       'Select item to be consumed:',
                       style: TextStyle(
@@ -764,7 +765,6 @@ class _HomePageState extends State<HomePage> {
                           fontWeight: FontWeight.bold),
                     ),
 
-                    // TypeAheadField
                     TypeAheadField<String>(
                       builder: (context, controller, focusNode) {
                         return TextField(
@@ -842,7 +842,7 @@ class _HomePageState extends State<HomePage> {
                         // Order top 5 most frequently used items
                         List<String> topItems = matchedItems.take(5).toList();
                         List<String> remainingItems = matchedItems.skip(5).toList();
-                        remainingItems.sort(); // Ensure remaining items are sorted alphabetically
+                        remainingItems.sort(); // Remaining items are sorted alphabetically
 
                         return topItems + remainingItems;
                       },
@@ -894,7 +894,6 @@ class _HomePageState extends State<HomePage> {
 
                     SizedBox(height: 10),
 
-                    // Item name field
                     TextField(
                         readOnly: true,
                         decoration: InputDecoration(
@@ -906,7 +905,6 @@ class _HomePageState extends State<HomePage> {
                         controller: _itemController),
 
                     SizedBox(height: 10),
-                    // Caffeine content field
                     TextField(
                       readOnly:
                           _selectedItem != "Other" && _selectedItem != null,
@@ -917,16 +915,9 @@ class _HomePageState extends State<HomePage> {
                       style:
                           TextStyle(color: brown, fontWeight: FontWeight.bold),
                         controller: _caffeineController,
-                      // controller: TextEditingController(
-                      //   text:
-                      //       (_selectedItem == null || _selectedItem == "Other")
-                      //           ? ''
-                      //           : _selectedItemCaffeine.toString(),
-                      // ),
                     ),
                     SizedBox(height: 10),
 
-                    // Category Dropdown
                     DropdownButtonFormField<String>(
                       value: _categoryController.text,
                       decoration: InputDecoration(
@@ -960,11 +951,10 @@ class _HomePageState extends State<HomePage> {
                                     }
                                   });
                                 }
-                              : null, // Disable otherwise
+                              : null,
                     ),
                     SizedBox(height: 10),
 
-                    // Size field
                     TextField(
                       readOnly: _selectedItemCategory == "Other Food" ||
                           (_selectedItem != "Other" && _selectedItem != null),
@@ -975,13 +965,6 @@ class _HomePageState extends State<HomePage> {
                       style:
                           TextStyle(color: brown, fontWeight: FontWeight.bold),
                       controller: _sizeController,
-                      // controller: TextEditingController(
-                      //   text: (_selectedItemCategory == "Other Food"
-                      //       ? '0'
-                      //       : (_selectedItem == null ||
-                      //               _selectedItem == "Other")
-                      //           ? ''
-                      //           : _selectedItemSize.toString()),
                     ),
                     SizedBox(height: 5),
 
@@ -1016,7 +999,6 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
 
-                    // Add New Item button
                     Center(
                       child: ElevatedButton(
                         onPressed: () {
@@ -1031,7 +1013,6 @@ class _HomePageState extends State<HomePage> {
                     ),
                     SizedBox(height: 10),
 
-                    // Edit list button
                     Center(
                       child: ElevatedButton(
                         onPressed: () {
@@ -1046,7 +1027,6 @@ class _HomePageState extends State<HomePage> {
                     ),
                     SizedBox(height: 10),
 
-                    // Calculate button
                     Center(
                       child: ElevatedButton(
                         onPressed: () async {
@@ -1085,24 +1065,6 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          // Positioned(
-          //   bottom: 20,
-          //   left: 20,
-          //   child: ElevatedButton(
-          //     onPressed: () {
-          //       Navigator.push(
-          //         context,
-          //         MaterialPageRoute(builder: (context) => BeverageScanner()),
-          //       );
-          //     },
-          //     style: ElevatedButton.styleFrom(
-          //       backgroundColor: caramel,
-          //       shape: CircleBorder(),
-          //       padding: EdgeInsets.all(20),
-          //     ),
-          //     child: Icon(Icons.camera_alt, color: brown),
-          //   ),
-          // ),
           Positioned(
             bottom: 20,
             right: 20,
@@ -1123,12 +1085,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
   void _showFeedbackDialog(BuildContext context) async {
-    // Fetch caffeine data from database
     final int? caffeineDuration = await _fetchCaffeineDuration();
     final DateTime? crashTime = await _fetchExpectedCrashTime();
     final DateTime? consumedTime = await _fetchConsumedTime();
 
-    // If no data exists, show an informative message
     if (caffeineDuration == null || crashTime == null || consumedTime == null) {
       showDialog(
         context: context,
@@ -1155,7 +1115,6 @@ class _HomePageState extends State<HomePage> {
       return;
     }
 
-    // Define time variations
     List<double> multipliers = [0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3];
     List<String> labels = [
       "Even earlier",
@@ -1179,7 +1138,6 @@ class _HomePageState extends State<HomePage> {
       };
     }).toList();
 
-    // Show dialog with feedback options
     showDialog(
       context: context,
       builder: (context) {
@@ -1205,25 +1163,23 @@ class _HomePageState extends State<HomePage> {
               String formattedTime = DateFormat('hh:mm a').format(option["time"]);
               String buttonText = option["label"];
 
-              // Hide specific times & minutes for "Even earlier" & "Even later"
               if (buttonText != "Even earlier" && buttonText != "Even later") {
                 buttonText += " ($formattedTime)";
               }
 
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0), // Add spacing between buttons
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
                 child: SizedBox(
-                  width: double.infinity, // Make the button take up the full width
+                  width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: caramel,
-                      padding: EdgeInsets.symmetric(vertical: 12), // Adjust button padding
+                      padding: EdgeInsets.symmetric(vertical: 12),
                     ),
                     onPressed: () {
                       _saveMultiplier(option["multiplier"]);
-                      Navigator.pop(context); // Close the feedback dialog
+                      Navigator.pop(context);
 
-                      // Show a confirmation message based on the selected option
                       String message;
                       if (option["label"] == "Expected time") {
                         message = "Thank you for your feedback!";
@@ -1231,7 +1187,6 @@ class _HomePageState extends State<HomePage> {
                         message = "Thank you for your feedback! Your data has been adjusted.";
                       }
 
-                      // Show the thank you dialog
                       _showThankYouDialog(context, message);
                     },
                     child: Text(

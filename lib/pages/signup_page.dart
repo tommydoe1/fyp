@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/neutral_base_page.dart';
 import '../controllers/user_account_controller.dart';
-import '../controllers/caffeine_page_controller.dart';
 import '../widgets/reusables.dart';
 import '../pages/menu_page.dart';
 
@@ -40,7 +39,6 @@ class _SignupPageState extends State<SignupPage> {
     String height = _heightController.text.trim();
     double weight = double.tryParse(_weightController.text.trim()) ?? 0;
 
-    // Validation
     if (email.isEmpty ||
         username.isEmpty ||
         password.isEmpty ||
@@ -53,7 +51,7 @@ class _SignupPageState extends State<SignupPage> {
     // Height conversion to meters
     double heightInMeters;
     if (_selectedHeightUnit == 'Feet & Inches') {
-      List<String> heightParts = height.split("'"); // Example: "5'11"
+      List<String> heightParts = height.split("'");
       if (heightParts.length == 2) {
         int feet = int.tryParse(heightParts[0]) ?? 0;
         int inches = int.tryParse(heightParts[1]) ?? 0;
@@ -112,7 +110,7 @@ class _SignupPageState extends State<SignupPage> {
 
               TextField(
                 controller: _passwordController,
-                obscureText: !_isPasswordVisible, // Toggle obscureText
+                obscureText: !_isPasswordVisible,
                 decoration: InputDecoration(
                   labelText: 'Password',
                   suffixIcon: IconButton(
@@ -122,7 +120,7 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                     onPressed: () {
                       setState(() {
-                        _isPasswordVisible = !_isPasswordVisible; // Toggle visibility
+                        _isPasswordVisible = !_isPasswordVisible;
                       });
                     },
                   ),

@@ -171,7 +171,6 @@ void showSetRequiredFieldsDialog(
               ),
               SizedBox(height: 20),
 
-              // Bedtime Input
               TextField(
                 controller: bedtimeController,
                 keyboardType: TextInputType.datetime,
@@ -184,7 +183,6 @@ void showSetRequiredFieldsDialog(
               ),
               SizedBox(height: 10),
 
-              // Caffeine Limit Input with Help Button
               Row(
                 children: [
                   Expanded(
@@ -209,7 +207,6 @@ void showSetRequiredFieldsDialog(
               ),
               SizedBox(height: 10),
 
-              // Daily Hydration Goal Input with Help Button
               Row(
                 children: [
                   Expanded(
@@ -234,7 +231,6 @@ void showSetRequiredFieldsDialog(
               ),
               SizedBox(height: 20),
 
-              // Save Button
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -244,7 +240,6 @@ void showSetRequiredFieldsDialog(
                       String caffeineLimitStr = caffeineLimitController.text.trim();
                       String dailyGoalStr = dailyGoalController.text.trim();
 
-                      // Check if any input field is empty
                       if (bedtime.isEmpty || caffeineLimitStr.isEmpty || dailyGoalStr.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Please fill out all fields!')),
@@ -256,21 +251,17 @@ void showSetRequiredFieldsDialog(
                         int caffeineLimit = int.tryParse(caffeineLimitStr) ?? 400; // Default 400 mg
                         int dailyGoal = int.tryParse(dailyGoalStr) ?? 2000; // Default 2000 ml
 
-                        // Attempt to parse bedtime
                         TimeOfDay? timeOfDay;
                         final twelveHourFormat = DateFormat("hh:mm a");
                         final twentyFourHourFormat = DateFormat("HH:mm");
 
                         try {
                           if (RegExp(r'^\d{1,2}:\d{2} (AM|PM)$', caseSensitive: false).hasMatch(bedtime)) {
-                            // Already in 12-hour format
                             DateTime parsedBedtime = twelveHourFormat.parse(bedtime);
                             timeOfDay = TimeOfDay(hour: parsedBedtime.hour, minute: parsedBedtime.minute);
                           } else if (RegExp(r'^\d{1,2}:\d{2}$').hasMatch(bedtime)) {
-                            // If entered in 24-hour format (e.g., 23:30)
                             DateTime parsedBedtime = twentyFourHourFormat.parse(bedtime);
                             timeOfDay = TimeOfDay(hour: parsedBedtime.hour, minute: parsedBedtime.minute);
-                            // Convert to 12-hour format for display
                             bedtimeController.text = twelveHourFormat.format(parsedBedtime);
                           } else {
                             throw FormatException("Invalid time format");
@@ -282,7 +273,6 @@ void showSetRequiredFieldsDialog(
                           return;
                         }
 
-                        // Save to Firestore
                         await databaseController.updateBedtime(uid: uid, bedtime: timeOfDay!);
                         await databaseController.updateCaffeineLimit(uid: uid, newCaffeineLimit: caffeineLimit);
                         await databaseController.updateDailyGoal(uid: uid, newDailyGoal: dailyGoal);
@@ -291,7 +281,7 @@ void showSetRequiredFieldsDialog(
                           SnackBar(content: Text('Fields updated successfully!')),
                         );
 
-                        Navigator.of(context).pop(); // Close the dialog
+                        Navigator.of(context).pop();
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Error updating fields: $e')),

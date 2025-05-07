@@ -20,31 +20,26 @@ class UserAccountController {
       final User currentUser = credential.user!;
       final String uid = currentUser.uid;
 
-      // Handle FCM token when user logs in
       await _handleFCMToken(uid);
 
       return {'uid': uid, 'success': true};
     } on FirebaseAuthException catch (e) {
       String errorMessage = _getErrorMessage(e.code);
-      showErrorDialog(context, errorMessage); // Use the reusable function
+      showErrorDialog(context, errorMessage);
       return {'uid': null, 'success': false};
     }
   }
 
   Future<List<Map<String, dynamic>>> _loadPersonalListFromCSV() async {
     try {
-      // Load CSV file from assets
       String csvData = await rootBundle.loadString('assets/caffeine.csv');
 
-      // Convert CSV to List<List<dynamic>>
       List<List<dynamic>> csvList = const CsvToListConverter().convert(csvData);
 
       if (csvList.isEmpty) return [];
 
-      // Extract headers
       final List<String> headers = csvList.first.map((e) => e.toString().trim()).toList();
 
-      // Verify required headers exist
       if (!headers.contains("Product") ||
           !headers.contains("Caffiene value (mg)") ||
           !headers.contains("Category") ||
@@ -53,7 +48,6 @@ class UserAccountController {
         return [];
       }
 
-      // Get header indexes safely
       int nameIndex = headers.indexOf("Product");
       int caffeineIndex = headers.indexOf("Caffiene value (mg)");
       int categoryIndex = headers.indexOf("Category");
@@ -248,6 +242,7 @@ class UserAccountController {
     final caffeineDocRef = FirebaseFirestore.instance.collection('caffeine').doc(uid);
     batch.delete(caffeineDocRef);
 
+    // Delete user's data from "caffeineHistory" collection
     final caffeineHistoryDocRef = FirebaseFirestore.instance.collection('caffeineHistory').doc(uid);
     batch.delete(caffeineHistoryDocRef);
 
@@ -255,6 +250,7 @@ class UserAccountController {
     final hydrationDocRef = FirebaseFirestore.instance.collection('hydration').doc(uid);
     batch.delete(hydrationDocRef);
 
+    // Delete user's data from "hydrationHistory" collection
     final hydrationHistoryDocRef = FirebaseFirestore.instance.collection('hydrationHistory').doc(uid);
     batch.delete(hydrationHistoryDocRef);
 

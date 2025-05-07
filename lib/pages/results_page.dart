@@ -29,7 +29,6 @@ class _ResultsPageState extends State<ResultsPage> {
     super.initState();
     _fetchData();
 
-    // Set up a periodic timer to update the countdown every second
     _timer = Timer.periodic(Duration(seconds: 1), (_) {
       if (_endTime != null && mounted) {
         setState(() {
@@ -41,13 +40,12 @@ class _ResultsPageState extends State<ResultsPage> {
 
   @override
   void dispose() {
-    _timer.cancel(); // Cancel the timer when the widget is disposed
+    _timer.cancel();
     super.dispose();
   }
 
   Future<void> _fetchData() async {
     try {
-      // Fetch the caffeine end time, total minutes, and last consumed item
       DateTime? endTime = await _databaseController.getCaffeineEndTime(widget.uid);
       int? totalMinutes = await _databaseController.getTotalMinutes(widget.uid);
       Map<String, dynamic>? lastItem = await _databaseController.getLastItem(widget.uid);
@@ -95,7 +93,6 @@ class _ResultsPageState extends State<ResultsPage> {
               textAlign: TextAlign.center,
             ),
 
-            // Time Remaining
             Text(
               _endTime == null || _endTime!.isBefore(DateTime.now())
                   ? 'No time remaining!'
@@ -118,7 +115,6 @@ class _ResultsPageState extends State<ResultsPage> {
             ),
             SizedBox(height: 40),
 
-            // Circular Progress Indicator
             if (_endTime != null && _endTime!.isAfter(DateTime.now()))
               SizedBox(
                 width: 200,
@@ -130,13 +126,12 @@ class _ResultsPageState extends State<ResultsPage> {
                       width: 200,
                       height: 200,
                       child: CircularProgressIndicator(
-                        value: _calculateProgress(_timeRemaining!), // Calculate progress dynamically
+                        value: _calculateProgress(_timeRemaining!),
                         strokeWidth: 10,
                         backgroundColor: Color(0xFFEAE0D5),
                         valueColor: AlwaysStoppedAnimation<Color>(caramel),
                       ),
                     ),
-                    // Percentage Text in the Middle
                     Text(
                       '${(_calculateProgress(_timeRemaining!) * 100).toStringAsFixed(1)}%',
                       style: TextStyle(
@@ -151,7 +146,6 @@ class _ResultsPageState extends State<ResultsPage> {
 
             SizedBox(height: 40),
 
-            // Bottom Text
             Text(
               'You last consumed:',
               style: TextStyle(
@@ -162,7 +156,6 @@ class _ResultsPageState extends State<ResultsPage> {
             ),
             SizedBox(height: 10),
 
-            // Last Consumed Item and Time
             Text(
               _lastConsumedItem != null && _lastConsumedTime != null
                   ? '$_lastConsumedItem at ${_formatTime(_lastConsumedTime!)}'
@@ -180,21 +173,18 @@ class _ResultsPageState extends State<ResultsPage> {
     );
   }
 
-  /// Progress calculation function for CircularProgressIndicator
   double _calculateProgress(Duration remainingTime) {
     if (_totalMinutes == 0) return 0.0; // Avoid division by zero
     final remainingMinutes = remainingTime.inMinutes;
     return remainingMinutes / _totalMinutes;
   }
 
-  /// Formats a duration into a readable string
   String _formatDuration(Duration duration) {
     final hours = duration.inHours;
     final minutes = duration.inMinutes % 60;
     return '$hours hours and $minutes minutes';
   }
 
-  /// Formats a DateTime object into a readable time string
   String _formatTime(DateTime time) {
     final formatter = DateFormat('hh:mm a');
     return formatter.format(time);

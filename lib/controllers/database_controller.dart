@@ -134,13 +134,12 @@ class DatabaseController {
     required String name,
     required int caffeineAmount,
     required String category,
-    required int? size, // Nullable for cases where size is not applicable
+    required int? size, // Nullable for food items
   }) async {
     try {
       DocumentReference userPersonalListDoc = _firestore.collection(
           'personalList').doc(uid);
 
-      // Update the document by appending a new item to an array or creating one
       await userPersonalListDoc.update({
         'items': FieldValue.arrayUnion([
           {
@@ -235,7 +234,7 @@ class DatabaseController {
   Future<void> updateItemInPersonalList({
     required String uid,
     required String oldName, // To identify the item in the list
-    required Map<String, dynamic> updatedItem, // Contains the new values (name, caffeineAmount, size)
+    required Map<String, dynamic> updatedItem, // Contains the new values
   }) async {
     try {
       DocumentReference userPersonalListDoc = _firestore.collection('personalList').doc(uid);
@@ -247,9 +246,9 @@ class DatabaseController {
         List<dynamic> updatedItems = items.map((item) {
           if (item['name'] == oldName) {
             return {
-              'name': updatedItem['name'] ?? item['name'], // Update name if provided
-              'caffeineAmount': updatedItem['caffeineAmount'] ?? item['caffeineAmount'], // Update caffeineAmount if provided
-              'size': updatedItem['size'] ?? item['size'], // Update size if provided
+              'name': updatedItem['name'] ?? item['name'],
+              'caffeineAmount': updatedItem['caffeineAmount'] ?? item['caffeineAmount'],
+              'size': updatedItem['size'] ?? item['size'],
             };
           }
           return item;
@@ -321,7 +320,7 @@ class DatabaseController {
             400; //default if not set
         DateTime cafEnd = (userCaffeineDoc['cafEnd'] as Timestamp).toDate();
 
-        if (cafEnd.isBefore(DateTime.now())) {
+        if (cafEnd.isBefore(now)) {
           cafEnd = consumptionDateTime;
         }
 
@@ -329,7 +328,7 @@ class DatabaseController {
         double weight = double.parse(await getWeight(uid));
         double bmi = weight / (height * height);
 
-        double halfLife = 4.0; // Average half-life of caffeine in hours
+        double halfLife = 4.0; // Base half-life of caffeine in hours
         halfLife = halfLife * (bmi / 23.0); // Adjust half-life based on BMI
 
         double cafTime = 0.0;
@@ -346,9 +345,17 @@ class DatabaseController {
         double multiplier = 1.0;
         multiplier = await getMultiplier(uid);
         cafTime *= multiplier;
-
         Duration cafDuration = Duration(minutes: cafTime.toInt());
-        cafEnd = cafEnd.add(cafDuration);
+
+        if (consumptionDateTime.isBefore(now) & cafEnd.isAfter(now)) {
+            Duration timeSinceConsumption = now.difference(consumptionDateTime);
+            Duration timeRemaining = cafDuration - timeSinceConsumption;
+            cafEnd = cafEnd.add(timeRemaining);
+        }
+        else {
+          cafEnd = cafEnd.add(cafDuration);
+        }
+
         int totalMinutes = cafEnd
             .difference(consumptionDateTime)
             .inMinutes;
@@ -477,7 +484,6 @@ class DatabaseController {
     required int newCaffeineLimit,
   }) async {
     try {
-      // Update the caffeineLimit field in the 'caffeine' collection for the given user
       await _firestore.collection('caffeine').doc(uid).update({
         'caffeineLimit': newCaffeineLimit,
       });
@@ -507,17 +513,14 @@ class DatabaseController {
           'itemsConsumed': [],
         };
       } else {
-        // Retrieve the array of maps
         List<dynamic> itemsConsumed = historyDoc['itemsConsumed'] ?? [];
 
-        // If the array is empty, return an empty map
         if (itemsConsumed.isEmpty) {
           return {
             'itemsConsumed': [],
           };
         }
 
-        // Return the valid caffeine history data
         return {
           'itemsConsumed': itemsConsumed,
         };
@@ -552,17 +555,32 @@ class DatabaseController {
 
   Future<Map<String, dynamic>?> getLastItem(String uid) async {
     try {
-      DocumentSnapshot userHistoryDoc = await _firestore.collection('caffeineHistory').doc(uid).get();
+      DocumentSnapshot userHistoryDoc =
+      await _firestore.collection('caffeineHistory').doc(uid).get();
 
       if (userHistoryDoc.exists) {
         List<dynamic> itemsConsumed = userHistoryDoc['itemsConsumed'] ?? [];
 
         if (itemsConsumed.isNotEmpty) {
-          Map<String, dynamic> lastItem = Map<String, dynamic>.from(itemsConsumed.last);
-          return {
-            'name': lastItem['name'],
-            'timeConsumed': lastItem['timeConsumed'],
-          };
+          Map<String, dynamic>? mostRecentItem;
+          DateTime latestTime = DateTime.fromMillisecondsSinceEpoch(0);
+
+          for (var item in itemsConsumed) {
+            Map<String, dynamic> itemData = Map<String, dynamic>.from(item);
+            DateTime timeConsumed = (itemData['timeConsumed'] as Timestamp).toDate();
+
+            if (timeConsumed.isAfter(latestTime)) {
+              latestTime = timeConsumed;
+              mostRecentItem = itemData;
+            }
+          }
+
+          if (mostRecentItem != null) {
+            return {
+              'name': mostRecentItem['name'],
+              'timeConsumed': mostRecentItem['timeConsumed'],
+            };
+          }
         } else {
           print("No items consumed for user: $uid");
           return null;
@@ -601,15 +619,12 @@ class DatabaseController {
 
   Future<bool> doAllFieldsExist(String uid) async {
     try {
-      // Retrieve both documents asynchronously
       DocumentSnapshot caffeineDoc = await _firestore.collection('caffeine').doc(uid).get();
       DocumentSnapshot hydrationDoc = await _firestore.collection('hydration').doc(uid).get();
 
-      // Extract data safely
       final caffeineData = caffeineDoc.data() as Map<String, dynamic>?;
       final hydrationData = hydrationDoc.data() as Map<String, dynamic>?;
 
-      // Log if any document is missing
       if (caffeineData == null) {
         print("Caffeine document data is null for user: $uid");
         return false;
@@ -630,7 +645,7 @@ class DatabaseController {
       return caffeineFieldsExist && hydrationFieldsExist;
     } catch (e) {
       print("Error checking fields: $e");
-      throw e; // Handle error appropriately
+      throw e;
     }
   }
 
@@ -662,7 +677,6 @@ class DatabaseController {
     required int newDailyGoal,
   }) async {
     try {
-      // Update the dailyGoal field in the 'hydration' collection for the given user
       await _firestore.collection('hydration').doc(uid).update({
         'dailyGoal': newDailyGoal,
       });
@@ -972,13 +986,11 @@ class DatabaseController {
         DocumentSnapshot snapshot = await transaction.get(userDocRef);
 
         if (snapshot.exists) {
-          // Update existing multiplier
           double oldMultiplier = await getMultiplier(uid);
           newMultiplier *= oldMultiplier;
           transaction.update(userDocRef, {'multiplier': newMultiplier});
           print("Multiplier updated successfully to $newMultiplier");
         } else {
-          // Create document and set multiplier field
           transaction.set(userDocRef, {'multiplier': newMultiplier});
           print("Multiplier created successfully with value $newMultiplier");
         }

@@ -64,9 +64,9 @@ class CaffeinePage extends StatelessWidget {
               padding: const EdgeInsets.only(right: 16.0),
               child: IconButton(
                 icon: Icon(
-                  Icons.water_drop, // Water droplet icon
-                  color: brown, // Icon color
-                  size: 28, // Icon size
+                  Icons.water_drop,
+                  color: brown,
+                  size: 28,
                 ),
                 onPressed: () {
                   // When the icon is pressed, navigate to HydrationPageController

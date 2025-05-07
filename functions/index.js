@@ -88,7 +88,7 @@ exports.scheduledHydrationCheck = pubsub.schedule('every 15 minutes').onRun(asyn
       const currentIntake = hydrationData.currentIntake;
 
       if (currentIntake < dailyGoal / 2 && !hydrationData.notified) {
-        const message = `You're below 50% of your daily hydration goal! Time to drink some water. 💧`;
+        const message = "You're below 50% of your daily hydration goal! Time to drink some water. 💧";
         await sendNotification(userId, message);
 
         // Mark as notified to avoid duplicate messages

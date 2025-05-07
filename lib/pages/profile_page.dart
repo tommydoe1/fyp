@@ -46,7 +46,6 @@ class _ProfilePageState extends State<ProfilePage> {
       int caffeineLimit = await databaseController.getCaffeineLimit(widget.uid);
       int hydrationGoal = await databaseController.getDailyGoal(widget.uid) ?? 0;
 
-      // Convert height from meters to centimeters
       double heightInCm = (double.tryParse(height) ?? 0) * 100;
 
       setState(() {
@@ -68,7 +67,7 @@ class _ProfilePageState extends State<ProfilePage> {
     if (bedtime.isNotEmpty) {
       List<String> parts = bedtime.split(':');
       String normalizedBedtime =
-          '${parts[0].padLeft(2, '0')}:${parts[1].padLeft(2, '0')}'; // Format as HH:mm
+          '${parts[0].padLeft(2, '0')}:${parts[1].padLeft(2, '0')}';
 
       if (times.contains(normalizedBedtime)) {
         setState(() {
@@ -185,7 +184,7 @@ class _ProfilePageState extends State<ProfilePage> {
           int feet = int.tryParse(parts[0].trim()) ?? 0;
           int inches = int.tryParse(parts[1].trim()) ?? 0;
 
-          // Convert to meters (1 foot = 0.3048 meters, 1 inch = 0.0254 meters)
+          // Convert to meters
           height = (feet * 0.3048) + (inches * 0.0254);
         } else {
           throw FormatException(
@@ -427,7 +426,6 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               SizedBox(height: 40),
 
-// Update Caffeine Limit
               Text(
                 'Set Your Caffeine Limit:',
                 style: TextStyle(
@@ -476,7 +474,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
               SizedBox(height: 40),
 
-// Update Hydration Goal
               Text(
                 'Set Your Daily Hydration Goal:',
                 style: TextStyle(

@@ -64,9 +64,9 @@ class HydrationPage extends StatelessWidget {
             padding: const EdgeInsets.only(right: 16.0),
             child: IconButton(
               icon: Icon(
-                Icons.coffee, // Coffee icon
-                color: dblue, // Icon color
-                size: 28, // Icon size
+                Icons.coffee,
+                color: dblue,
+                size: 28,
               ),
               onPressed: () {
                 // When the icon is pressed, navigate to HydrationPageController
@@ -91,7 +91,7 @@ class HydrationPage extends StatelessWidget {
           },
         ),
       )
-          : null, // No app bar if showAppBar is false
+          : null,
       body: Container(
         color: dblue,
         child: Theme(

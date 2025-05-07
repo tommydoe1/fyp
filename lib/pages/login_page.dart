@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../widgets/neutral_base_page.dart';
-import '../controllers/caffeine_page_controller.dart';
 import '../controllers/user_account_controller.dart';
 import '../widgets/reusables.dart';
 import '../pages/menu_page.dart';
@@ -58,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
               padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
               child: TextField(
                 controller: _passwordController,
-                obscureText: !_isPasswordVisible, // Toggles text visibility
+                obscureText: !_isPasswordVisible,
                 autofillHints: [AutofillHints.password],
                 decoration: InputDecoration(
                   labelText: 'Password',
@@ -69,7 +68,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     onPressed: () {
                       setState(() {
-                        _isPasswordVisible = !_isPasswordVisible; // Update state
+                        _isPasswordVisible = !_isPasswordVisible;
                       });
                     },
                   ),

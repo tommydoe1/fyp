@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/reusables.dart';
 import '../controllers/database_controller.dart';
 import '../widgets/hydration_base_page.dart';
-import '../pages/results_page.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
-import '../controllers/caffeine_page_controller.dart';
-import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 
 class HydroHomePage extends StatefulWidget {
@@ -20,7 +15,6 @@ class HydroHomePage extends StatefulWidget {
 }
 
 class _HydroHomePageState extends State<HydroHomePage> {
-  String? _selectedItem;
   String _selectedItemCategory = 'Water';
   final DatabaseController databaseController = DatabaseController();
   String _username = 'Loading...'; // placeholder
@@ -58,47 +52,37 @@ class _HydroHomePageState extends State<HydroHomePage> {
       int dailyGoal = await databaseController.getDailyGoal(widget.uid) ?? 2000;
       DateTime now = DateTime.now();
 
-      // Fetch user's bedtime
       String? bedtimeString = await databaseController.getBedtime(widget.uid);
       if (bedtimeString == null) {
         print("Error: Bedtime not found.");
         return;
       }
 
-      // Parse bedtime (assuming stored format is "HH:mm" in 24-hour format)
       List<String> bedtimeParts = bedtimeString.split(":");
       int bedtimeHour = int.parse(bedtimeParts[0]);
       int bedtimeMinute = int.parse(bedtimeParts[1]);
       DateTime bedtime = DateTime(now.year, now.month, now.day, bedtimeHour, bedtimeMinute);
 
-      // Ensure bedtime is in the future (if the user set bedtime past midnight)
       if (bedtime.isBefore(now)) {
         bedtime = bedtime.add(Duration(days: 1));
       }
 
-      // Calculate wake-up time (bedtime - 7 hours)
-      DateTime wakeUpTime = bedtime.subtract(Duration(hours: 7));
+      DateTime wakeUpTime = bedtime.add(Duration(hours: 7));
 
-      // Ensure wake-up time is today
       if (wakeUpTime.isAfter(now)) {
         wakeUpTime = wakeUpTime.subtract(Duration(days: 1));
       }
 
-      // Calculate total awake hours
       int awakeHours = bedtime.difference(wakeUpTime).inHours;
-      if (awakeHours <= 0) awakeHours = 17; // Default to 17 if there's an error
+      if (awakeHours <= 0) awakeHours = 17;
 
-      // Calculate how much they should drink per hour
       int hourlyTarget = (dailyGoal / awakeHours).ceil();
 
-      // Calculate elapsed awake hours
       int elapsedHours = now.difference(wakeUpTime).inHours;
-      elapsedHours = elapsedHours.clamp(0, awakeHours); // Ensure it's within range
+      elapsedHours = elapsedHours.clamp(0, awakeHours);
 
-      // Expected water intake by now
       int expectedConsumption = elapsedHours * hourlyTarget;
 
-      // Determine message
       String progressMessage;
       int difference = waterConsumed.toInt() - expectedConsumption;
 
@@ -118,8 +102,6 @@ class _HydroHomePageState extends State<HydroHomePage> {
       print("Error fetching progress data: $e");
     }
   }
-
-
 
   Future<void> _checkRequiredFields() async {
     bool fieldsExist = await databaseController.doAllFieldsExist(widget.uid);
@@ -151,7 +133,6 @@ class _HydroHomePageState extends State<HydroHomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Welcome Back text
                 Text(
                   'Welcome Back $_username!',
                   style: TextStyle(
@@ -166,7 +147,6 @@ class _HydroHomePageState extends State<HydroHomePage> {
                   height: 150,
                   fit: BoxFit.fill,
                 ),
-                // Select item section
                 Text(
                   'Enter how much you have drank:',
                   style: TextStyle(
@@ -176,7 +156,6 @@ class _HydroHomePageState extends State<HydroHomePage> {
                   ),
                 ),
                 SizedBox(height: 10),
-                // Water content field
                 TextField(
                   controller: _sizeController,
                   keyboardType: TextInputType.number,
@@ -191,7 +170,6 @@ class _HydroHomePageState extends State<HydroHomePage> {
                 ),
                 SizedBox(height: 20),
 
-                // Category Dropdown
                 DropdownButtonFormField<String>(
                   value: _selectedItemCategory,
                   decoration: InputDecoration(
@@ -228,7 +206,6 @@ class _HydroHomePageState extends State<HydroHomePage> {
                 ),
                 SizedBox(height: 20),
 
-                // Calculate button
                 Center(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -275,7 +252,6 @@ class _HydroHomePageState extends State<HydroHomePage> {
                   ),
                 ),
                 SizedBox(height: 10),
-                // Progress bar
                 Center(
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.8,

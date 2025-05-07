@@ -39,54 +39,14 @@ class _HydrationHistoryPageState extends State<HydrationHistoryPage> {
     super.dispose();
   }
 
-  void _fetchData() async {
-    DateTime now = DateTime.now();
-    DateTime startDate;
-
-    switch (_selectedTimeRange) {
-      case "Last Month":
-        startDate = now.subtract(Duration(days: 30));
-        break;
-      case "Last Two Months":
-        startDate = now.subtract(Duration(days: 60));
-        break;
-      case "Last Three Months":
-        startDate = now.subtract(Duration(days: 90));
-        break;
-      default:
-        startDate = now.subtract(Duration(days: 7));
-    }
-    int? dailyGoal = await databaseController.getDailyGoal(widget.uid);
-
-    List<Map<String, dynamic>> logs = await databaseController.getHydrationHistoryForPeriod(widget.uid, startDate, now);
-
-    // Sort logs by timestamp in descending order (most recent first)
-    logs.sort((a, b) {
-      Timestamp timestampA = a['timeConsumed'];
-      Timestamp timestampB = b['timeConsumed'];
-      return timestampB.compareTo(timestampA); // Compare in descending order
-    });
-
-    // Check if widget is still mounted before calling setState
-    if (!mounted) return;
-
-    setState(() {
-      _hydrationLogs = logs;
-      _dailyConsumption = databaseController.calculateDailyWaterConsumption(logs);
-      _drinkTypeCounts = databaseController.calculateDrinkTypeCounts(logs);
-      _dailyGoal = dailyGoal ?? 2000;
-    });
-  }
-
   void _fetchAllData() async {
     DateTime now = DateTime.now();
-    DateTime startDate = now.subtract(Duration(days: 90)); // Last 3 months
+    DateTime startDate = now.subtract(Duration(days: 90));
 
     int? dailyGoal = await databaseController.getDailyGoal(widget.uid);
 
     List<Map<String, dynamic>> logs = await databaseController.getHydrationHistoryForPeriod(widget.uid, startDate, now);
 
-    // Sort logs by timestamp in descending order (most recent first)
     logs.sort((a, b) {
       Timestamp timestampA = a['timeConsumed'];
       Timestamp timestampB = b['timeConsumed'];
@@ -100,7 +60,7 @@ class _HydrationHistoryPageState extends State<HydrationHistoryPage> {
       _dailyGoal = dailyGoal ?? 2000;
     });
 
-    // Apply initial filter (e.g., default to last 7 days)
+    // Apply default filter of last week
     _filterData("Last Week");
   }
 
@@ -251,7 +211,7 @@ class _HydrationHistoryPageState extends State<HydrationHistoryPage> {
                         ),
                         SizedBox(height: 4),
                         Text(
-                          "Time Consumed: $formattedTime", // Use the formatted time here
+                          "Time Consumed: $formattedTime",
                           style: TextStyle(color: hydroColorScheme.foregroundColor, fontSize: 14),
                         ),
                       ],
@@ -270,12 +230,10 @@ class _HydrationHistoryPageState extends State<HydrationHistoryPage> {
     final bars = <BarChartGroupData>[];
     final allDates = <DateTime>[];
 
-    // Collect all dates in _dailyConsumption
     _dailyConsumption.keys.forEach((dateStr) {
       allDates.add(DateTime.parse(dateStr));
     });
 
-    // Determine the date range
     DateTime now = DateTime.now();
     DateTime startDate = allDates.isEmpty
         ? now.subtract(Duration(days: 7)) // Default to last 7 days if no data
@@ -304,7 +262,7 @@ class _HydrationHistoryPageState extends State<HydrationHistoryPage> {
           BarChartRodData(
             toY: waterAmount,
             color: hydroColorScheme.foregroundColor,
-            width: 10, // Adjusted dynamically below
+            width: 10,
             borderRadius: BorderRadius.circular(2),
             borderSide: BorderSide(color: Colors.black, width: 0.8),
           ),
@@ -378,6 +336,7 @@ class _HydrationHistoryPageState extends State<HydrationHistoryPage> {
               leftTitles: AxisTitles(
                 sideTitles: SideTitles(
                   showTitles: true,
+                  reservedSize: 50,
                   getTitlesWidget: (value, meta) => Text(
                     "${value.toInt()} ml",
                     style: TextStyle(
@@ -461,14 +420,14 @@ class _HydrationHistoryPageState extends State<HydrationHistoryPage> {
   BarChartData _buildDrinkTypeGraph() {
     // Sort the entries alphabetically by the drink type (key)
     final sortedEntries = _drinkTypeCounts.entries.toList()
-      ..sort((a, b) => a.key.compareTo(b.key));  // Sort by key (alphabetically)
+      ..sort((a, b) => a.key.compareTo(b.key));
 
-    // Create the bars based on sorted entries
+
     final barSpots = sortedEntries.asMap().map((index, entry) {
       return MapEntry(
           index,
           BarChartGroupData(
-          x: index,  // Use the sorted index for x value
+          x: index,
           barRods: [
           BarChartRodData(
           toY: entry.value.toDouble(),
@@ -479,7 +438,7 @@ class _HydrationHistoryPageState extends State<HydrationHistoryPage> {
       ],
       )
       );
-    }).values.toList();  // Convert to list
+    }).values.toList();
 
     return BarChartData(
       barGroups: barSpots,
@@ -490,9 +449,9 @@ class _HydrationHistoryPageState extends State<HydrationHistoryPage> {
           sideTitles: SideTitles(
             showTitles: true,
             getTitlesWidget: (value, meta) {
-              int groupIndex = value.toInt();  // Use groupIndex for label
+              int groupIndex = value.toInt();
               return Text(
-                sortedEntries[groupIndex].key,  // Display drink type (key) in alphabetical order
+                sortedEntries[groupIndex].key,
                 style: TextStyle(color: hydroColorScheme.foregroundColor, fontSize: 12),
               );
             },
@@ -532,7 +491,4 @@ class _HydrationHistoryPageState extends State<HydrationHistoryPage> {
       ),
     );
   }
-
-
-
 }
